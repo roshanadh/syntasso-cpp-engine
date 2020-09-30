@@ -9,7 +9,15 @@ module.exports = socketId => {
 			exec(
 				`docker container rm ${socketId} --force`,
 				(error, stdout, stderr) => {
-					if (error) {
+					// even if error occurred, check if the error occurred due to ...
+					// ... the container not existing beforehand, making it impossible ...
+					// ... to delete the container
+					if (
+						error &&
+						!error.message.includes(
+							`No such container: ${socketId}`
+						)
+					) {
 						console.error(
 							"Error while removing C++ container:",
 							error
@@ -19,7 +27,12 @@ module.exports = socketId => {
 						// ... or an stderr was generated during the build process
 						return reject({ error });
 					}
-					if (stderr) {
+					if (
+						stderr &&
+						!error.message.includes(
+							`No such container: ${socketId}`
+						)
+					) {
 						console.error(
 							"stderr while removing C++ container:",
 							stderr
