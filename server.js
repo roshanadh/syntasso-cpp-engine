@@ -1,12 +1,33 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const session = require("express-session");
+const redis = require("redis");
+const RedisStore = require("connect-redis")(session);
 
-const { PORT } = require("./config.js");
+const {
+	PORT,
+	SECRET_SESSION_KEY,
+	REDIS_STORE_HOST,
+	REDIS_STORE_PORT,
+} = require("./config.js");
 const router = require("./routes/router.js");
 
 const app = express();
 app.set("json spaces", 2);
+app.use(
+	session({
+		secret: SECRET_SESSION_KEY,
+		store: new RedisStore({
+			host: REDIS_STORE_HOST,
+			port: REDIS_STORE_PORT,
+			client: redis.createClient(),
+		}),
+		saveUninitialized: false,
+		resave: false,
+	})
+);
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(router);
 
 app.listen(PORT, () =>
