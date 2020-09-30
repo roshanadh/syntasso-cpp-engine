@@ -1,11 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const session = require("express-session");
 const redis = require("redis");
 const RedisStore = require("connect-redis")(session);
 
 const {
 	PORT,
+	CLIENT_PROTOCOL,
+	CLIENT_HOST,
+	CLIENT_PORT,
 	SECRET_SESSION_KEY,
 	REDIS_STORE_HOST,
 	REDIS_STORE_PORT,
@@ -14,6 +18,12 @@ const router = require("./routes/router.js");
 
 const app = express();
 app.set("json spaces", 2);
+app.use(
+	cors({
+		credentials: true,
+		origin: `${CLIENT_PROTOCOL}://${CLIENT_HOST}:${CLIENT_PORT}`,
+	})
+);
 app.use(
 	session({
 		secret: SECRET_SESSION_KEY,
@@ -30,6 +40,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(router);
 
-app.listen(PORT, () =>
+const server = app.listen(PORT, () =>
 	console.log(`Syntasso C++ Engine is now listening on port ${PORT}...`)
 );
+
+const socketInstance = new (require("./socket/socket.js"))(server);
+
+module.exports = {
+	server,
+	socketInstance,
+};
