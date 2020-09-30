@@ -4,7 +4,7 @@
 	"description": "C++ compilation and execution engine for Syntasso",
 	"main": "server.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "NODE_ENV=test mocha $(find test -name '*.test.js') --sort --timeout 120000 --exit",
 		"start:dev": "nodemon server.js"
 	},
 	"repository": {
