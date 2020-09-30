@@ -3,8 +3,12 @@ const {
 	createCppContainer,
 	startCppContainer,
 } = require("../docker/index.js");
+const {
+	createSubmissionFilePath,
+	generateSubmissionFile,
+} = require("../filesystem/index.js");
 
-const handleConfigZero = (req, res) => {
+const handleConfigZero = (req, res, next) => {
 	buildCppImage(req)
 		.then(buildLogs => {
 			return createCppContainer(req);
@@ -13,13 +17,12 @@ const handleConfigZero = (req, res) => {
 			return handleConfigOne(req, res);
 		})
 		.catch(error => {
-			return res.status(503).json({
-				errorInEngine: "Service unavailable due to server conditions",
-			});
+			error.status = 503;
+			next(error);
 		});
 };
 
-const handleConfigOne = (req, res) => {
+const handleConfigOne = (req, res, next) => {
 	startCppContainer(req)
 		.then(startLogs => {
 			return res.status(200).json({
@@ -27,29 +30,39 @@ const handleConfigOne = (req, res) => {
 			});
 		})
 		.catch(error => {
-			throw error;
+			error.status = 503;
+			next(error);
 		});
 };
 
-const handleConfigTwo = (req, res) => {};
+const handleConfigTwo = (req, res, next) => {};
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
 	try {
-		const dockerConfig = parseInt(req.body.dockerConfig);
-		switch (dockerConfig) {
-			case 0:
-				handleConfigZero(req, res);
-				break;
-			case 1:
-				handleConfigOne(req, res);
-				break;
-			case 2:
-				handleConfigTwo(req, res);
-				break;
-		}
+		createSubmissionFilePath(req.body.socketId)
+			.then(submissionFilePath => generateSubmissionFile(req))
+			.then(fileName => {
+				{
+					const dockerConfig = parseInt(req.body.dockerConfig);
+					switch (dockerConfig) {
+						case 0:
+							handleConfigZero(req, res, next);
+							break;
+						case 1:
+							handleConfigOne(req, res, next);
+							break;
+						case 2:
+							handleConfigTwo(req, res, next);
+							break;
+					}
+				}
+			})
+			.catch(error => {
+				error.status = 503;
+				next(error);
+			});
 	} catch (error) {
-		return res.status(503).json({
-			errorInEngine: "Service unavailable due to server conditions",
-		});
+		error.status = 503;
+		next(error);
 	}
 };
