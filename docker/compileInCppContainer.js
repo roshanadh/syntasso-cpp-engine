@@ -10,11 +10,38 @@ const compileSubmission = (req, socketInstance) => {
 			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
 				stdout: "Compiling .cpp submission inside container...",
 			});
+			/*
+			 * Using the following g++ flags:
+			 * -Wall: Enable most of the warnings
+			 * -Wfatal-errors: Stop compilation after detecting a fatal error
+			 */
 			exec(
-				`docker exec -i ${socketId} g++ ${socketId}.cpp -o submission`,
+				`docker exec -i ${socketId} g++ ${socketId}.cpp -o submission -Wall -Wfatal-errors`,
 				(error, stdout, stderr) => {
-					if (stderr) {
-						// stderr contains compilation errors and warnings
+					/*
+					 * If a compilation warning is detected, 'stderr' exists but 'error' ...
+					 * ... doesn't.
+					 * If a compilation error is detected, both 'stderr' and 'error' exist.
+					 * *
+					 * error exists in case the compilation process, i.e., the 'docker exec' ...
+					 * ... command is not completed, ...
+					 * ... hence the 'submission' file is not created.
+					 * *
+					 * stderr exists in case of any compilation warnings, after the execution of ...
+					 * ... the 'docker exec' command, or compilation errors, hence the ...
+					 * ... submission file may or may not be created.
+					 * *
+					 * This means that, whenever 'error' exists, 'submission' file is not ...
+					 * ... created, and this can be treated as either a compilation error, ...
+					 * ... or an error during execution of 'docker exec' command.
+					 * *
+					 */
+					// error contains compilation errors, just like stderr, but ...
+					// ... along with the Node.js error stack, unlike stderr, which is ...
+					// ... not needed so we use stderr for rejecting compilation errors and ...
+					// ... resolving warnings
+					if (!error && stderr) {
+						// this is the case of a compilation warning
 						console.error(
 							"stderr while compiling submission:",
 							stderr
@@ -28,15 +55,11 @@ const compileSubmission = (req, socketInstance) => {
 						// ... makes it easier to check later if a compilation error/warning ...
 						// ... occurred or not during the compilation process
 						return resolve({
-							stderr,
-							stdout: stdout ? stdout : null,
+							compilationWarnings: stderr,
 						});
 					}
-					if (error) {
-						// error contains compilation errors and warnings but ...
-						// ... along with the Node.js error stack, which is not needed ...
-						// ... so we use stderr for resolving compilation errors and ...
-						// ... warnings
+					if (error && stderr) {
+						// this is the case of a compilation error
 						console.error(
 							"Error while compiling submission:",
 							error
@@ -44,17 +67,21 @@ const compileSubmission = (req, socketInstance) => {
 						// reject an object with keys error or stderr, because this ...
 						// ... makes it easier to check later if an error occurred ...
 						// ... or an stderr was generated during the build process
-						return reject({ error });
+						return reject({ compilationError: stderr });
 					}
-					console.log(
-						`stdout during compilation of submission: ${stdout}`
-					);
+					// at this point, compilation has completed without any errors ...
+					// ... or warnings
+					if (stdout) {
+						console.log(
+							`stdout during compilation of submission: ${stdout}`
+						);
+						socketInstance.instance
+							.to(socketId)
+							.emit("docker-app-stdout", {
+								stdout: `stdout during compilation of submission: ${stdout}`,
+							});
+					}
 					console.log(`${socketId}.cpp compiled.`);
-					socketInstance.instance
-						.to(socketId)
-						.emit("docker-app-stdout", {
-							stdout: `stdout during compilation of submission: ${stdout}`,
-						});
 					socketInstance.instance
 						.to(socketId)
 						.emit("docker-app-stdout", {
