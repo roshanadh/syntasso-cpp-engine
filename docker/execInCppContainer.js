@@ -38,15 +38,17 @@ module.exports = (req, socketInstance) => {
 						// ... or an stderr was generated during the build process
 						return reject({ error });
 					}
-					console.log(
-						`stdout during execution of submission: ${stdout}`
-					);
+					if (stdout) {
+						console.log(
+							`stdout during execution of submission: ${stdout}`
+						);
+						socketInstance.instance
+							.to(socketId)
+							.emit("docker-app-stdout", {
+								stdout: `stdout during execution of submission: ${stdout}`,
+							});
+					}
 					console.log(`Submission from ${socketId} executed.`);
-					socketInstance.instance
-						.to(socketId)
-						.emit("docker-app-stdout", {
-							stdout: `stdout during execution of submission: ${stdout}`,
-						});
 					socketInstance.instance
 						.to(socketId)
 						.emit("docker-app-stdout", {
