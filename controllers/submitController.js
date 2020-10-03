@@ -39,13 +39,19 @@ const handleConfigOne = (req, res, next) => {
 
 const handleConfigTwo = (req, res, next) => {
 	const { socketInstance } = require("../server.js");
-	let compilationWarnings, error;
+	let compilationWarnings;
 	compileInCppContainer(req, socketInstance)
+		/*
+		 * resolves possible compilation warnings and stdout of compilation process as...
+		 * ... {compilationWarnings, stdout}, and rejects any possible compilation error...
+		 * ... as {compilationError}
+		 */
 		.then(compilationLogs => {
 			/*
 			 * compilationLogs.stdout contains the output of compilation
-			 * compilationLogs.stderr contains any possible compilation errors/warnings
+			 * compilationLogs.compilationWarnings contains any possible compilation warnings
 			 */
+			({ compilationWarnings } = compilationLogs);
 			return execInCppContainer(req, socketInstance);
 		})
 		.then(execLogs => {
@@ -54,11 +60,20 @@ const handleConfigTwo = (req, res, next) => {
 			 * execLogs.stderr contains any possible errors during execution
 			 */
 			return res.status(200).json({
+				compilationWarnings,
 				execLogs,
-				compilationLogs,
 			});
 		})
 		.catch(error => {
+			/*
+			 * error.compilationError contains any possible compilation error
+			 */
+			if (error.compilationError) {
+				return res.status(200).json({
+					compilationWarnings,
+					error: error.compilationError,
+				});
+			}
 			error.status = 503;
 			next(error);
 		});
