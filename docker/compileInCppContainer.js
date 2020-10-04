@@ -19,6 +19,9 @@ const compileSubmission = (req, socketInstance) => {
 				`docker exec -i ${socketId} g++ ${socketId}.cpp -o submission -Wall -Wfatal-errors`,
 				(error, stdout, stderr) => {
 					/*
+					 * Note: In the following context, the term 'exists' implies that ...
+					 * ... a variable is either not null or not empty.
+					 * *
 					 * If a compilation warning is detected, 'stderr' exists but 'error' ...
 					 * ... doesn't.
 					 * If a compilation error is detected, both 'stderr' and 'error' exist.
