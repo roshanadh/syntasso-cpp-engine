@@ -26,7 +26,7 @@ describe("Test socket disconnection and cleanup:", () => {
 		done();
 	});
 
-	it("should remove the client-files/{socketId} sub directory if it was created", done => {
+	it("should remove the client-files/{socketId} sub-directory if it was created", done => {
 		expect(fs.existsSync(clientFilesSubDirPath)).to.be.false;
 		done();
 	});
