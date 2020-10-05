@@ -1,4 +1,4 @@
-const { exec } = require("child_process");
+const { exec, spawnSync } = require("child_process");
 
 module.exports = socketId => {
 	return new Promise((resolve, reject) => {
@@ -6,6 +6,62 @@ module.exports = socketId => {
 			console.log(
 				`Removing any existing C++ containers named ${socketId}...`
 			);
+			// if the engine is run on an testing environment, use the sync function ...
+			// ... otherwise, use the async function
+			if (process.env.NODE_ENV === "test") {
+				let stdout, stderr;
+				try {
+					const removeProcess = spawnSync("docker", [
+						"container",
+						"rm",
+						`${socketId}`,
+						"--force",
+					]);
+					[stdout, stderr] = removeProcess.output;
+					stdout = stdout ? stdout.toString() : null;
+					stderr = stderr ? stderr.toString() : null;
+					if (
+						stderr &&
+						!stderr.includes(`No such container: ${socketId}`)
+					) {
+						console.error(
+							"stderr while removing C++ container:",
+							stderr
+						);
+						// reject an object with keys error or stderr, because this ...
+						// ... makes it easier to check later if an error occurred ...
+						// ... or an stderr was generated during the removal process
+						return reject({ stderr });
+					}
+					console.log(
+						`stdout while removing container ${socketId}: ${stdout}`
+					);
+					console.log(`C++ container named ${socketId} removed.`);
+					return resolve(stdout);
+				} catch (error) {
+					if (
+						error &&
+						!error.message.includes(
+							`No such container: ${socketId}`
+						)
+					) {
+						console.error(
+							"Error while removing C++ container:",
+							error
+						);
+						// reject an object with keys error or stderr, because this ...
+						// ... makes it easier to check later if an error occurred ...
+						// ... or an stderr was generated during the removal process
+						return reject({ error });
+					}
+					console.log(
+						`stdout during C++ container removal: ${stdout}`
+					);
+					console.log("C++ container removed.");
+					return resolve(stdout);
+				}
+			}
+			// else: NODE_ENV is not "test", so use async function
 			exec(
 				`docker container rm ${socketId} --force`,
 				(error, stdout, stderr) => {
@@ -24,14 +80,12 @@ module.exports = socketId => {
 						);
 						// reject an object with keys error or stderr, because this ...
 						// ... makes it easier to check later if an error occurred ...
-						// ... or an stderr was generated during the build process
+						// ... or an stderr was generated during the removal process
 						return reject({ error });
 					}
 					if (
 						stderr &&
-						!error.message.includes(
-							`No such container: ${socketId}`
-						)
+						!stderr.includes(`No such container: ${socketId}`)
 					) {
 						console.error(
 							"stderr while removing C++ container:",
@@ -39,7 +93,7 @@ module.exports = socketId => {
 						);
 						// reject an object with keys error or stderr, because this ...
 						// ... makes it easier to check later if an error occurred ...
-						// ... or an stderr was generated during the build process
+						// ... or an stderr was generated during the removal process
 						return reject({ stderr });
 					}
 					console.log(
