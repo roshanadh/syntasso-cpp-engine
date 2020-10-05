@@ -1,10 +1,15 @@
 const { exec } = require("child_process");
 
-module.exports = req => {
+module.exports = (req, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
+			const { socketId } = req.body;
+			console.log("Starting C++ container...");
+			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
+				stdout: "Starting C++ container...",
+			});
 			exec(
-				`docker container start ${req.body.socketId}`,
+				`docker container start ${socketId}`,
 				(error, stdout, stderr) => {
 					if (error) {
 						console.error(
@@ -21,6 +26,11 @@ module.exports = req => {
 							"stderr while starting C++ container:",
 							stderr
 						);
+						socketInstance.instance
+							.to(socketId)
+							.emit("docker-app-stdout", {
+								stdout: `stderr while starting C++ container: ${stderr}`,
+							});
 						// reject an object with keys error or stderr, because this ...
 						// ... makes it easier to check later if an error occurred ...
 						// ... or an stderr was generated during the build process
@@ -28,6 +38,16 @@ module.exports = req => {
 					}
 					console.log(`stdout during C++ container start: ${stdout}`);
 					console.log("C++ container started.");
+					socketInstance.instance
+						.to(socketId)
+						.emit("docker-app-stdout", {
+							stdout: `stdout during C++ container start: ${stdout}`,
+						});
+					socketInstance.instance
+						.to(socketId)
+						.emit("docker-app-stdout", {
+							stdout: "C++ container started.",
+						});
 					return resolve(stdout);
 				}
 			);
