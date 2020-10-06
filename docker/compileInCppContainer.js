@@ -14,9 +14,10 @@ const compileSubmission = (req, socketInstance) => {
 			 * Using the following g++ flags:
 			 * -Wall: Enable most of the warnings
 			 * -Wfatal-errors: Stop compilation after detecting a fatal error
+			 * -Werror=div-by-zero: Stop compilation after a div-by-zero is detected
 			 */
 			exec(
-				`docker exec -i ${socketId} g++ ${socketId}.cpp -o submission -Wall -Wfatal-errors`,
+				`docker exec -i ${socketId} g++ ${socketId}.cpp -o submission -Wall -Wfatal-errors -Werror=div-by-zero`,
 				(error, stdout, stderr) => {
 					/*
 					 * Note: In the following context, the term 'exists' implies that ...
