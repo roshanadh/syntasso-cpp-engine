@@ -9,6 +9,7 @@ const {
 	createSubmissionFilePath,
 	generateSubmissionFile,
 } = require("../filesystem/index.js");
+const { compilationWarningParser } = require("../util/index.js");
 
 const handleConfigZero = (req, res, next) => {
 	const { socketInstance } = require("../server.js");
@@ -20,7 +21,6 @@ const handleConfigZero = (req, res, next) => {
 			return handleConfigOne(req, res, next);
 		})
 		.catch(error => {
-			error.status = 503;
 			next(error);
 		});
 };
@@ -32,7 +32,6 @@ const handleConfigOne = (req, res, next) => {
 			return handleConfigTwo(req, res, next);
 		})
 		.catch(error => {
-			error.status = 503;
 			next(error);
 		});
 };
@@ -51,7 +50,22 @@ const handleConfigTwo = (req, res, next) => {
 			 * compilationLogs.stdout contains the output of compilation
 			 * compilationLogs.compilationWarnings contains any possible compilation warnings
 			 */
-			({ compilationWarnings } = compilationLogs);
+			// get the warning stack and an array of parsed individual warnings
+			let {
+				warningStack,
+				warnings,
+				errorInParser,
+			} = compilationWarningParser(
+				compilationLogs.compilationWarnings,
+				req.body.socketId
+			);
+
+			if (errorInParser) return next(errorInParser);
+
+			compilationWarnings = {
+				warningStack,
+				warnings,
+			};
 			return execInCppContainer(req, socketInstance);
 		})
 		.then(execLogs => {
@@ -59,22 +73,26 @@ const handleConfigTwo = (req, res, next) => {
 			 * execLogs.stdout contains the output of the submission
 			 * execLogs.stderr contains any possible errors during execution
 			 */
-			return res.status(200).json({
+			const response = {
 				compilationWarnings,
 				execLogs,
-			});
+			};
+			console.log("Response to the client:", response);
+			return res.status(200).json(response);
 		})
 		.catch(error => {
 			/*
 			 * error.compilationError contains any possible compilation error
 			 */
 			if (error.compilationError) {
-				return res.status(200).json({
+				const response = {
 					compilationWarnings,
 					error: error.compilationError,
-				});
+					errorType: "compilation-error",
+				};
+				console.log("Response to the client:", response);
+				return res.status(200).json(response);
 			}
-			error.status = 503;
 			next(error);
 		});
 };
