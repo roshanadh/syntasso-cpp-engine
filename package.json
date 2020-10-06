@@ -5,7 +5,7 @@
 	"main": "server.js",
 	"scripts": {
 		"test": "NODE_ENV=test mocha $(find test -name '*.test.js') --sort --timeout 120000 --exit",
-		"start:dev": "nodemon server.js"
+		"start:dev": "NODE_ENV=dev nodemon server.js"
 	},
 	"repository": {
 		"type": "git",
@@ -31,6 +31,7 @@
 		"express": "^4.17.1",
 		"express-session": "^1.17.1",
 		"redis": "^3.0.2",
+		"rimraf": "^3.0.2",
 		"socket.io": "^2.3.0"
 	},
 	"devDependencies": {

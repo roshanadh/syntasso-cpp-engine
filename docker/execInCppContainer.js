@@ -35,7 +35,7 @@ module.exports = (req, socketInstance) => {
 						);
 						// reject an object with keys error or stderr, because this ...
 						// ... makes it easier to check later if an error occurred ...
-						// ... or an stderr was generated during the build process
+						// ... or an stderr was generated during the execution process
 						return reject({ error });
 					}
 					if (stdout) {
