@@ -3,6 +3,7 @@ const {
 	createCppContainer,
 	startCppContainer,
 	compileInCppContainer,
+	linkInCppContainer,
 	execInCppContainer,
 } = require("../docker/index.js");
 const {
@@ -66,6 +67,13 @@ const handleConfigTwo = (req, res, next) => {
 					warnings,
 				};
 			}
+			return linkInCppContainer(req, socketInstance);
+		})
+		.then(linkLogs => {
+			/*
+			 * linkInCppContainer.stdout contains the output of linking
+			 * linkInCppContainer rejects any error as {error}
+			 */
 			return execInCppContainer(req, socketInstance);
 		})
 		.then(execLogs => {
@@ -82,13 +90,27 @@ const handleConfigTwo = (req, res, next) => {
 		})
 		.catch(error => {
 			/*
-			 * error.compilationError contains any possible compilation error
+			 * error.compilationError contains any possible compilation error, ...
+			 * ... rejected by compileInCppContainer
 			 */
 			if (error.compilationError) {
 				const response = {
 					compilationWarnings,
 					error: error.compilationError,
 					errorType: "compilation-error",
+				};
+				console.log("Response to the client:", response);
+				return res.status(200).json(response);
+			}
+			/*
+			 * error.linkerError contains any possible linker error, rejected by ...
+			 * ... linkInCppContainer
+			 */
+			if (error.linkerError) {
+				const response = {
+					compilationWarnings,
+					error: error.linkerError,
+					errorType: "linker-error",
 				};
 				console.log("Response to the client:", response);
 				return res.status(200).json(response);
