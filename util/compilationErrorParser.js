@@ -66,6 +66,7 @@ module.exports = (stderr, socketId) => {
 		 */
 		// First, try to parse the error from combined stack, look for 'error', ...
 		// ... or 'fatal error' keywords, ignoring the adjoining warning
+		// TODO: Also fetch warnings from the combined stack and include in response
 		const _error = getErrorFromCombinedStack(stderr, socketId);
 		if (_error) stderr = _error;
 		// start parsing for lineNumber, columnNumber, and errorMessage
