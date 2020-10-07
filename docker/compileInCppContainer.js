@@ -17,7 +17,7 @@ const compileSubmission = (req, socketInstance) => {
 			 * -Werror=div-by-zero: Stop compilation after a div-by-zero is detected
 			 */
 			exec(
-				`docker exec -i ${socketId} g++ ${socketId}.cpp -o submission -Wall -Wfatal-errors -Werror=div-by-zero`,
+				`docker exec -i ${socketId} g++ -c ${socketId}.cpp -Wall -Wfatal-errors -Werror=div-by-zero`,
 				(error, stdout, stderr) => {
 					/*
 					 * Note: In the following context, the term 'exists' implies that ...
@@ -68,9 +68,11 @@ const compileSubmission = (req, socketInstance) => {
 							"Error while compiling submission:",
 							error
 						);
-						// reject an object with keys error or stderr, because this ...
-						// ... makes it easier to check later if an error occurred ...
-						// ... or an stderr was generated during the compilation process
+						/*
+						 * reject an object with key 'compilationError' because it makes...
+						 * ... distinguishing the type of error easier when handling promise...
+						 * ... rejections inside submitController
+						 */
 						return reject({ compilationError: stderr });
 					}
 					// at this point, compilation has completed without any errors ...
