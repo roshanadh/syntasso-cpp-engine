@@ -11,12 +11,23 @@ module.exports = (stderr, socketId) => {
 	 * compilation terminated.
 	 */
 	try {
+		let warningsSubstring = null,
+			errorSubstring = null;
+		// check for any "warning" token, if not found, whole stack is an error stack
+		const warningRegex = new RegExp(
+			`(${socketId}.cpp:\\d+:\\d+: warning: )`,
+			"g"
+		);
+		if (!stderr.match(warningRegex)) {
+			return {
+				warningsSubstring,
+				errorSubstring: stderr,
+			};
+		}
 		const tokens = stderr.split(`${socketId}.cpp:`);
 		// returns an array after splitting
 		// filter tokens array to remove any empty elements
 		const nonEmptyTokens = tokens.filter(element => element);
-		let warningsSubstring = null,
-			errorSubstring = null;
 		for (let i = 0; i < nonEmptyTokens.length; i++) {
 			let token = nonEmptyTokens[i];
 			if (token.includes("fatal error") || token.includes("error")) {
