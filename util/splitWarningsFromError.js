@@ -24,7 +24,7 @@ module.exports = (stderr, socketId) => {
 				break;
 			}
 		}
-		warningsSubstring = stderr.replace(errorSubstring);
+		warningsSubstring = stderr.replace(errorSubstring, "");
 		return {
 			warningsSubstring,
 			errorSubstring,
