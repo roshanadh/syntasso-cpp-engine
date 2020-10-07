@@ -105,13 +105,13 @@ const handleConfigTwo = (req, res, next) => {
 				 * This stderr is then rejected as error.compilationError
 				 * So, we should split them apart, before parsing them separately.
 				 */
-				const {
-					warningsSubstring,
-					errorSubstring,
-				} = splitWarningsFromError(
+				const _splitStack = splitWarningsFromError(
 					error.compilationError,
 					req.body.socketId
 				);
+				if (_splitStack.errorInParser)
+					return next(_splitStack.errorInParser);
+				let { warningsSubstring, errorSubstring } = _splitStack;
 				// parse the warnings substring
 				const _parsedWarnings = compilationWarningParser(
 					warningsSubstring,
@@ -122,7 +122,8 @@ const handleConfigTwo = (req, res, next) => {
 					errorSubstring,
 					req.body.socketId
 				);
-				if (_parsedError.errorInParser) return next(error);
+				if (_parsedError.errorInParser)
+					return next(_parsedError.errorInParser);
 				const response = {
 					compilationWarnings: compilationWarnings
 						? compilationWarningParser
@@ -139,7 +140,8 @@ const handleConfigTwo = (req, res, next) => {
 			 */
 			if (error.linkerError) {
 				const _parsedError = linkerErrorParser(error.linkerError);
-				if (_parsedError.errorInParser) return next(error);
+				if (_parsedError.errorInParser)
+					return next(_parsedError.errorInParser);
 				const response = {
 					compilationWarnings,
 					error: _parsedError,
