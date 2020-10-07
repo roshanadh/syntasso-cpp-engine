@@ -11,11 +11,6 @@ module.exports = (req, socketInstance) => {
 			exec(
 				`docker exec -i ${socketId} g++ ${socketId}.o -o submission`,
 				(error, stdout, stderr) => {
-					console.dir({
-						error: error ? error : null,
-						stderr: stderr ? stderr : null,
-						stdout: stdout ? stdout : null,
-					});
 					if (stderr) {
 						console.error(
 							`stderr while linking ${socketId}.o:`,
@@ -46,7 +41,6 @@ module.exports = (req, socketInstance) => {
 						 * reject an object with key 'linkerError' because it makes distinguishing the ...
 						 * ... type of error easier when handling promise rejections inside submitController
 						 */
-
 						return reject({
 							linkerError: error,
 						});
