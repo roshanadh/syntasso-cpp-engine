@@ -14,6 +14,7 @@ const {
 	compilationWarningParser,
 	compilationErrorParser,
 	linkerErrorParser,
+	splitWarningsFromError,
 } = require("../util/index.js");
 
 const handleConfigZero = (req, res, next) => {
@@ -98,13 +99,34 @@ const handleConfigTwo = (req, res, next) => {
 			 * ... rejected by compileInCppContainer
 			 */
 			if (error.compilationError) {
-				const _parsedError = compilationErrorParser(
+				/*
+				 * Sometimes, compilation warnings and the compilation error are adjoined in ...
+				 * ... a single stderr.
+				 * This stderr is then rejected as error.compilationError
+				 * So, we should split them apart, before parsing them separately.
+				 */
+				const {
+					warningsSubstring,
+					errorSubstring,
+				} = splitWarningsFromError(
 					error.compilationError,
+					req.body.socketId
+				);
+				// parse the warnings substring
+				const _parsedWarnings = compilationWarningParser(
+					warningsSubstring,
+					req.body.socketId
+				);
+				// parse the error substring
+				const _parsedError = compilationErrorParser(
+					errorSubstring,
 					req.body.socketId
 				);
 				if (_parsedError.errorInParser) return next(error);
 				const response = {
-					compilationWarnings,
+					compilationWarnings: compilationWarnings
+						? compilationWarningParser
+						: _parsedWarnings,
 					error: _parsedError,
 					errorType: "compilation-error",
 				};
