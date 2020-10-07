@@ -1,23 +1,3 @@
-const getErrorFromCombinedStack = (stderr, socketId) => {
-	const tokens = stderr.split(`${socketId}.cpp:`);
-	// returns an array after splitting
-	// filter tokens array to remove any empty elements
-	const nonEmptyTokens = tokens.filter(element => element);
-	let fatalError = null;
-	for (let i = 0; i < nonEmptyTokens.length; i++) {
-		let token = nonEmptyTokens[i];
-		if (token.includes("fatal error") || token.includes("error")) {
-			console.dir({
-				msg: "Fatal error found",
-				token: `${socketId}.cpp:${token}`,
-			});
-			fatalError = `${socketId}.cpp:${token}`;
-			break;
-		}
-	}
-	return fatalError;
-};
-
 const parse = (stderr, regexMatchResult) => {
 	/*
 	 * Parses the lineNumber, columnNumber, and errorMessage from an error stack
@@ -64,12 +44,6 @@ module.exports = (stderr, socketId) => {
 		 *                                 ^
 		 * compilation terminated.
 		 */
-		// First, try to parse the error from combined stack, look for 'error', ...
-		// ... or 'fatal error' keywords, ignoring the adjoining warning
-		// TODO: Also fetch warnings from the combined stack and include in response
-		const _error = getErrorFromCombinedStack(stderr, socketId);
-		if (_error) stderr = _error;
-		// start parsing for lineNumber, columnNumber, and errorMessage
 		let _parsed;
 		// search for substring "s-02c34e5658faf8e781.cpp:5:2: error"
 		let substringWithErrorRegex = new RegExp(
