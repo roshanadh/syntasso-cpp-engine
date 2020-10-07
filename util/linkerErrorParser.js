@@ -14,8 +14,8 @@ module.exports = stderr => {
 		return {
 			errorStack,
 		};
-	} catch (err) {
-		console.error(`error in linkerErrorParser:`, err);
-		return { errorInParser: err };
+	} catch (error) {
+		console.error(`Error in linkerErrorParser:`, error);
+		return { errorInParser: error };
 	}
 };
