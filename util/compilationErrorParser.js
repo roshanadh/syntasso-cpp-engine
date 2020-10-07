@@ -90,7 +90,7 @@ module.exports = (stderr, socketId) => {
 		];
 		// filter array to get one regex that matches with the stderr
 		const matchingRegexes = regexes.filter(regex => stderr.match(regex));
-		if (matchingRegexes.length === 1 || matchingRegexes.length > 1) {
+		if (matchingRegexes.length >= 1) {
 			// even if more than one regex are present in stderr, parse ...
 			// ... using the first matching regex
 			let regexMatchResult = stderr.match(matchingRegexes[0]);
