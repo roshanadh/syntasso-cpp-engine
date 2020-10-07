@@ -4,5 +4,6 @@ module.exports = {
 	createCppContainer: require("./createCppContainer.js"),
 	startCppContainer: require("./startCppContainer.js"),
 	compileInCppContainer: require("./compileInCppContainer.js"),
+	linkInCppContainer: require("./linkInCppContainer.js"),
 	execInCppContainer: require("./execInCppContainer.js"),
 };
