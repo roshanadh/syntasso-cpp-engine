@@ -10,7 +10,11 @@ const {
 	createSubmissionFilePath,
 	generateSubmissionFile,
 } = require("../filesystem/index.js");
-const { compilationWarningParser } = require("../util/index.js");
+const {
+	compilationWarningParser,
+	compilationErrorParser,
+	linkerErrorParser,
+} = require("../util/index.js");
 
 const handleConfigZero = (req, res, next) => {
 	const { socketInstance } = require("../server.js");
@@ -94,9 +98,14 @@ const handleConfigTwo = (req, res, next) => {
 			 * ... rejected by compileInCppContainer
 			 */
 			if (error.compilationError) {
+				const _parsedError = compilationErrorParser(
+					error.compilationError,
+					req.body.socketId
+				);
+				if (_parsedError.errorInParser) return next(error);
 				const response = {
 					compilationWarnings,
-					error: error.compilationError,
+					error: _parsedError,
 					errorType: "compilation-error",
 				};
 				console.log("Response to the client:", response);
@@ -107,9 +116,11 @@ const handleConfigTwo = (req, res, next) => {
 			 * ... linkInCppContainer
 			 */
 			if (error.linkerError) {
+				const _parsedError = linkerErrorParser(error.linkerError);
+				if (_parsedError.errorInParser) return next(error);
 				const response = {
 					compilationWarnings,
-					error: error.linkerError,
+					error: _parsedError,
 					errorType: "linker-error",
 				};
 				console.log("Response to the client:", response);
