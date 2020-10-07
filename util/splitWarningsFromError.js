@@ -10,22 +10,29 @@ module.exports = (stderr, socketId) => {
 	 *                                 ^
 	 * compilation terminated.
 	 */
-	const tokens = stderr.split(`${socketId}.cpp:`);
-	// returns an array after splitting
-	// filter tokens array to remove any empty elements
-	const nonEmptyTokens = tokens.filter(element => element);
-	let warningsSubstring = null,
-		errorSubstring = null;
-	for (let i = 0; i < nonEmptyTokens.length; i++) {
-		let token = nonEmptyTokens[i];
-		if (token.includes("fatal error") || token.includes("error")) {
-			errorSubstring = `${socketId}.cpp:${token}`;
-			break;
+	try {
+		const tokens = stderr.split(`${socketId}.cpp:`);
+		// returns an array after splitting
+		// filter tokens array to remove any empty elements
+		const nonEmptyTokens = tokens.filter(element => element);
+		let warningsSubstring = null,
+			errorSubstring = null;
+		for (let i = 0; i < nonEmptyTokens.length; i++) {
+			let token = nonEmptyTokens[i];
+			if (token.includes("fatal error") || token.includes("error")) {
+				errorSubstring = `${socketId}.cpp:${token}`;
+				break;
+			}
 		}
+		warningsSubstring = stderr.replace(errorSubstring);
+		return {
+			warningsSubstring,
+			errorSubstring,
+		};
+	} catch (error) {
+		console.error("Error in splitWarningsFromError:", error);
+		return {
+			errorInParser: error,
+		};
 	}
-	warningsSubstring = stderr.replace(errorSubstring);
-	return {
-		warningsSubstring,
-		errorSubstring,
-	};
 };
