@@ -117,4 +117,57 @@ describe("Test POST /submit:", () => {
 				});
 		});
 	});
+
+	describe("Correct params tests:", () => {
+		it("should POST with code and dockerConfig = 0", done => {
+			const payload = {
+				socketId,
+				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
+				dockerConfig: "0",
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					res.body.output.should.equal("Hello World!");
+					done();
+				});
+		});
+
+		it("should POST with code and dockerConfig = 1", done => {
+			const payload = {
+				socketId,
+				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
+				dockerConfig: "1",
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					res.body.output.should.equal("Hello World!");
+					done();
+				});
+		});
+
+		it("should POST with code and dockerConfig = 2", done => {
+			const payload = {
+				socketId,
+				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
+				dockerConfig: "2",
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					res.body.output.should.equal("Hello World!");
+					done();
+				});
+		});
+	});
 });
