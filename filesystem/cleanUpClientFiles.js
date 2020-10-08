@@ -19,7 +19,7 @@ module.exports = socketId => {
 				// if in test env, use the sync method
 				rimraf.sync(clientFilesSubDirPath);
 				console.log(
-					`Removed client-files sub-directory for socket ID ${socketId}`
+					`Removed client-files sub-directory for socket ID ${socketId}.`
 				);
 				return resolve(clientFilesSubDirPath);
 			} else {
@@ -32,6 +32,9 @@ module.exports = socketId => {
 						);
 						return reject(error);
 					}
+					console.log(
+						`Removed client-files sub-directory for socket ID ${socketId}.`
+					);
 					return resolve(clientFilesSubDirPath);
 				});
 			}
