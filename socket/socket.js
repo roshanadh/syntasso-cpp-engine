@@ -22,13 +22,13 @@ class Socket {
 				console.log(`REASON: ${reason}\n`);
 				removeCppContainer(socket.id).catch(error =>
 					console.error(
-						`Error during cleanup after socket ${socket.id} disconnection:`,
+						`Error during container cleanup after socket ${socket.id} disconnection:`,
 						error
 					)
 				);
 				cleanUpClientFiles(socket.id).catch(error =>
 					console.error(
-						`Error during cleanup after socket ${socket.id} disconnection:`,
+						`Error during client-files/ cleanup after socket ${socket.id} disconnection:`,
 						error
 					)
 				);
