@@ -56,7 +56,7 @@ module.exports = (req, res, next) => {
 			 */
 			const response = {
 				compilationWarnings,
-				execLogs,
+				output: execLogs.stdout,
 			};
 			console.log("Response to the client:", response);
 			return res.status(200).json(response);
