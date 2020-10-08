@@ -36,8 +36,7 @@ module.exports = (req, res, next, compilationError, compilationWarnings) => {
 			compilationWarnings: compilationWarnings
 				? compilationWarningParser
 				: _parsedWarnings,
-			error: _parsedError,
-			errorType: "compilation-error",
+			error: { ..._parsedError, errorType: "compilation-error" },
 		};
 		console.log("Response to the client:", response);
 		return res.json(response);
