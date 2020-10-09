@@ -51,12 +51,12 @@ module.exports = (req, res, next) => {
 		})
 		.then(execLogs => {
 			/*
-			 * execLogs.stdout contains the output of the submission
-			 * execLogs.stderr contains any possible errors during execution
+			 * execLogs contains the output of the submission, time for execution, and other details
 			 */
 			const response = {
 				compilationWarnings,
-				output: execLogs.stdout,
+				error: null,
+				...execLogs,
 			};
 			console.log("Response to the client:", response);
 			return res.status(200).json(response);
