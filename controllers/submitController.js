@@ -1,6 +1,8 @@
 const {
 	createSubmissionFilePath,
 	generateSubmissionFile,
+	createTestFilesPath,
+	generateTestFiles,
 } = require("../filesystem/index.js");
 const {
 	handleConfigZero,
@@ -11,8 +13,10 @@ const {
 module.exports = (req, res, next) => {
 	try {
 		createSubmissionFilePath(req.body.socketId)
-			.then(submissionFilePath => generateSubmissionFile(req))
-			.then(fileName => {
+			.then(() => generateSubmissionFile(req))
+			.then(() => createTestFilesPath(req.body.socketId))
+			.then(() => generateTestFiles(req))
+			.then(() => {
 				{
 					const dockerConfig = parseInt(req.body.dockerConfig);
 					switch (dockerConfig) {
