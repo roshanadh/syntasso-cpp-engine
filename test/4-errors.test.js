@@ -13,6 +13,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!"\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -32,6 +33,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<randomlib>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -51,6 +53,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\nint a = 10 / 0;\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -68,6 +71,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main(){\nfoo();\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -87,6 +91,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream> int main(){\nint a; int b;\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -113,6 +118,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -130,6 +136,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nvoid foo();\nint main(){\nfoo();\n}\nvoid foo();`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
