@@ -153,7 +153,30 @@ describe("Test submission programs at /submit:", () => {
 		});
 	});
 
-	describe("Runtime error tests:", () => {
-		// TODO: Write runtime error tests
+	describe("Exception tests:", () => {
+		it("should respond with exception for a thrown exception", done => {
+			const payload = {
+				socketId,
+				code: `#include <iostream>\n using namespace std;\n double division(int a, int b) { if( b == 0 ) { throw "Division by zero condition!"; } return (a/b); } int main () { int x = 50; int y = 0; double z = 0; cout<<"Hello World!"; try { z = division(x, y); cout << z << endl; } catch (const char* msg) { cerr << msg << endl; } return 0; }`,
+				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					expect(res.body.error).to.be.null;
+					expect(res.body.sampleInput0.testStatus).to.be.false;
+					res.body.sampleInput0.observedOutput.should.equal(
+						"Hello World!"
+					);
+					res.body.sampleInput0.exception.should.equal(
+						"Division by zero condition!"
+					);
+					done();
+				});
+		});
 	});
 });

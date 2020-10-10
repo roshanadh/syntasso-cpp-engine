@@ -50,7 +50,10 @@ module.exports = (req, socketInstance) => {
 								stdout: `User's submission executed`,
 							});
 						console.log(`Submission from ${socketId} executed.`);
-						return resolve({ ...jsonOutput, executionTime });
+						return resolve({
+							...jsonOutput,
+							executionTime,
+						});
 					}
 				} catch (error) {
 					if (error.message.includes("Unexpected token { in JSON")) {
@@ -127,26 +130,11 @@ module.exports = (req, socketInstance) => {
 			mainWrapper.stderr.on("data", stderrBuffer => {
 				const stderr = JSON.parse(stderrBuffer.toString());
 				// check if some instance of Error was written to stderr
-				if (stderr.error) {
-					console.error(
-						`Some error while executing main-wrapper inside ${socketId}:`,
-						stderr.error
-					);
-					return reject({ error: stderr.error });
-				} else if (stderr.stderr) {
-					console.error(
-						`stderr while executing submission inside container ${socketId}:`,
-						stderr.stderr
-					);
-					socketInstance.instance
-						.to(socketId)
-						.emit("docker-app-stdout", {
-							stdout: `stderr while executing submission`,
-						});
-					return reject({
-						stderr,
-					});
-				}
+				console.error(
+					`Some error while executing main-wrapper inside ${socketId}:`,
+					stderr
+				);
+				return reject({ error: stderr });
 			});
 		} catch (error) {
 			console.error("Error in execInCppContainer:", error);
