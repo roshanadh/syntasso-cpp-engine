@@ -4,14 +4,14 @@ module.exports = socketId => {
 	return new Promise((resolve, reject) => {
 		try {
 			console.log(
-				"Removing any existing client-files/ from container..."
+				"Removing any existing client-files/ contents from container..."
 			);
 			exec(
 				`docker exec -i ${socketId} sh -c "rm -rf sampleInputs; rm -rf expectedOutputs"`,
 				(error, stdout, stderr) => {
 					if (error) {
 						console.error(
-							`Error while removing client-files/ from container ${socketId}:`,
+							`Error while removing client-files/ contents from container ${socketId}:`,
 							error
 						);
 						// reject an object with keys error or stderr, because this ...
@@ -21,7 +21,7 @@ module.exports = socketId => {
 					}
 					if (stderr) {
 						console.error(
-							`stderr while removing client-files/ from container ${socketId}:`,
+							`stderr while removing client-files/ contents from container ${socketId}:`,
 							stderr
 						);
 						// reject an object with keys error or stderr, because this ...
@@ -30,7 +30,7 @@ module.exports = socketId => {
 						return reject({ stderr });
 					}
 					console.log(
-						`client-files/ removed from container ${socketId}`
+						`client-files/ contents removed from container ${socketId}`
 					);
 					return resolve(stdout);
 				}
