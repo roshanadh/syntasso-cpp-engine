@@ -22,7 +22,8 @@ module.exports = socketId => {
 					stderr = stderr ? stderr.toString() : null;
 					if (
 						stderr &&
-						!stderr.includes(`No such container: ${socketId}`)
+						!stderr.includes(`No such container: ${socketId}`) &&
+						!stderr.trim().includes(socketId)
 					) {
 						console.error(
 							"stderr while removing C++ container:",
@@ -85,7 +86,8 @@ module.exports = socketId => {
 					}
 					if (
 						stderr &&
-						!stderr.includes(`No such container: ${socketId}`)
+						!stderr.includes(`No such container: ${socketId}`) &&
+						!stderr.trim().includes(socketId)
 					) {
 						console.error(
 							"stderr while removing C++ container:",

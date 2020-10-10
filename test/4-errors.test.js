@@ -13,6 +13,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!"\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -32,6 +33,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<randomlib>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -51,6 +53,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\nint a = 10 / 0;\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -68,6 +71,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main(){\nfoo();\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -75,6 +79,30 @@ describe("Test submission programs at /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
+					res.body.error.should.be.a("object");
+					res.body.error.errorType.should.equal("compilation-error");
+					expect(res.body.error.lineNumber).to.not.be.NaN;
+					expect(res.body.error.columnNumber).to.not.be.NaN;
+					done();
+				});
+		});
+		it("should respond with errorType = compilation-error and parse warnings from a combined stack", done => {
+			const payload = {
+				socketId,
+				code: `#include<iostream> int main(){\nint a; int b;\n}`,
+				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					expect(res.body.compilationWarnings).to.not.be.null;
+					expect(
+						res.body.compilationWarnings.warnings.length
+					).to.equal(1);
 					res.body.error.should.be.a("object");
 					res.body.error.errorType.should.equal("compilation-error");
 					expect(res.body.error.lineNumber).to.not.be.NaN;
@@ -90,6 +118,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -107,6 +136,7 @@ describe("Test submission programs at /submit:", () => {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nvoid foo();\nint main(){\nfoo();\n}\nvoid foo();`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -123,7 +153,30 @@ describe("Test submission programs at /submit:", () => {
 		});
 	});
 
-	describe("Runtime error tests:", () => {
-		// TODO: Write runtime error tests
+	describe("Exception tests:", () => {
+		it("should respond with exception for a thrown exception", done => {
+			const payload = {
+				socketId,
+				code: `#include <iostream>\n using namespace std;\n double division(int a, int b) { if( b == 0 ) { throw "Division by zero condition!"; } return (a/b); } int main () { int x = 50; int y = 0; double z = 0; cout<<"Hello World!"; try { z = division(x, y); cout << z << endl; } catch (const char* msg) { cerr << msg << endl; } return 0; }`,
+				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					expect(res.body.error).to.be.null;
+					expect(res.body.sampleInput0.testStatus).to.be.false;
+					res.body.sampleInput0.observedOutput.should.equal(
+						"Hello World!"
+					);
+					res.body.sampleInput0.exception.should.equal(
+						"Division by zero condition!"
+					);
+					done();
+				});
+		});
 	});
 });

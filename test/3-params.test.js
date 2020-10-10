@@ -116,14 +116,50 @@ describe("Test POST /submit:", () => {
 					done();
 				});
 		});
+
+		it("should not POST without testCases", done => {
+			const payload = {
+				socketId,
+				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
+				dockerConfig: 2,
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					res.body.error.should.equal("No test cases provided");
+					done();
+				});
+		});
+
+		it("should not POST with empty test cases", done => {
+			const payload = {
+				socketId,
+				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
+				dockerConfig: 2,
+				testCases: [],
+			};
+			chai.request(server)
+				.post("/submit")
+				.send(payload)
+				.end((err, res) => {
+					expect(err).to.be.null;
+					res.body.should.be.a("object");
+					res.body.error.should.equal("No test cases provided");
+					done();
+				});
+		});
 	});
 
 	describe("Correct params tests:", () => {
-		it("should POST with code and dockerConfig = 0", done => {
+		it("should POST with code, testCases, and dockerConfig = 0", done => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
 				dockerConfig: "0",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -131,16 +167,19 @@ describe("Test POST /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
-					res.body.output.should.equal("Hello World!");
+					res.body.sampleInput0.observedOutput.should.equal(
+						"Hello World!"
+					);
 					done();
 				});
 		});
 
-		it("should POST with code and dockerConfig = 1", done => {
+		it("should POST with code, testCases, and dockerConfig = 1", done => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
 				dockerConfig: "1",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -148,16 +187,19 @@ describe("Test POST /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
-					res.body.output.should.equal("Hello World!");
+					res.body.sampleInput0.observedOutput.should.equal(
+						"Hello World!"
+					);
 					done();
 				});
 		});
 
-		it("should POST with code and dockerConfig = 2", done => {
+		it("should POST with code, testCases, and dockerConfig = 2", done => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
 				dockerConfig: "2",
+				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
 				.post("/submit")
@@ -165,7 +207,9 @@ describe("Test POST /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
-					res.body.output.should.equal("Hello World!");
+					res.body.sampleInput0.observedOutput.should.equal(
+						"Hello World!"
+					);
 					done();
 				});
 		});

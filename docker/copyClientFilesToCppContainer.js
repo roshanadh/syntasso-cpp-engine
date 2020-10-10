@@ -2,10 +2,11 @@ const path = require("path");
 const { exec } = require("child_process");
 
 module.exports = req => {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		try {
-			console.log("Copying client-files/ to container...");
 			const { socketId } = req.session;
+			await require("./removeClientFilesFromCppContainer.js")(socketId);
+			console.log("Copying client-files/ to container...");
 			const localPath = path.resolve(
 				__dirname,
 				"..",
