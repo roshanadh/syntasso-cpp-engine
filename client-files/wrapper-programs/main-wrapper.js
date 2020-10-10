@@ -4,11 +4,9 @@ const writeErrorToStderr = error => {
 	process.stderr.write(
 		Buffer.from(
 			JSON.stringify({
-				error: {
-					message: error.message,
-					name: error.name,
-					stack: error.stack,
-				},
+				message: error.message,
+				name: error.name,
+				stack: error.stack,
 			})
 		)
 	);
