@@ -41,7 +41,7 @@ module.exports = (
 		if (_parsedError.errorInParser) return next(_parsedError.errorInParser);
 		const response = {
 			compilationWarnings: compilationWarnings
-				? compilationWarningParser
+				? compilationWarnings
 				: _parsedWarnings,
 			error: { ..._parsedError, errorType: "compilation-error" },
 			...times,
