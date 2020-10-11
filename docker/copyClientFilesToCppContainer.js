@@ -5,7 +5,6 @@ module.exports = req => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const { socketId } = req.session;
-			await require("./removeClientFilesFromCppContainer.js")(socketId);
 			console.log("Copying client-files/ to container...");
 			const localPath = path.resolve(
 				__dirname,
