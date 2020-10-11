@@ -1,7 +1,7 @@
 const { startCppContainer } = require("../docker/index.js");
 
 const handleConfigTwo = require("./handleConfigTwo.js");
-const handleBadDockerConfig = require("./handleBadDockerConfig.js");
+const handle403Response = require("./handle403Response.js");
 
 module.exports = (req, res, next, times) => {
 	const { socketInstance } = require("../server.js");
@@ -20,7 +20,7 @@ module.exports = (req, res, next, times) => {
 					`No such container: ${req.session.socketId}`
 				)
 			) {
-				return handleBadDockerConfig(
+				return handle403Response(
 					res,
 					"Re-request using dockerConfig 0 because container has not been created"
 				);

@@ -8,6 +8,7 @@ const {
 	handleConfigZero,
 	handleConfigOne,
 	handleConfigTwo,
+	handle403Response,
 } = require("../handlers/index.js");
 
 module.exports = (req, res, next) => {
@@ -39,6 +40,16 @@ module.exports = (req, res, next) => {
 				}
 			})
 			.catch(error => {
+				/*
+				 * error.errorInGenerateTestFiles exists if some error occurred mid-generation of ...
+				 * ... test files
+				 */
+				if (error.errorInGenerateTestFiles) {
+					return handle403Response(
+						res,
+						"Re-request with both sampleInput and expectedOutput in each dictionary of testCases array"
+					);
+				}
 				error.status = 503;
 				next(error);
 			});
