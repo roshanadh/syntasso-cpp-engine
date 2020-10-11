@@ -6,7 +6,7 @@ const {
 
 const handleCompilationError = require("./handleCompilationError.js");
 const handleLinkerError = require("./handleLinkerError.js");
-const handleBadDockerConfig = require("./handleBadDockerConfig.js");
+const handle403Response = require("./handle403Response.js");
 
 const { compilationWarningParser } = require("../util/index.js");
 
@@ -116,7 +116,7 @@ module.exports = (req, res, next, times) => {
 					`No such container: ${req.body.socketId}`
 				)
 			) {
-				return handleBadDockerConfig(
+				return handle403Response(
 					res,
 					"Re-request using dockerConfig 0 or 1 because container has not been created or started"
 				);
