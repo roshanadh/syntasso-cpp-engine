@@ -49,19 +49,19 @@ module.exports = req => {
 					console.log(
 						`${socketId}-expectedOutput-${index}.txt generated.`
 					);
-				} catch (err) {
+				} catch (error) {
 					console.error(
 						`Error while writing to test case files for socketId ${socketId}:`,
-						err
+						error
 					);
-					return reject(err);
+					return reject({ errorInGenerateTestFiles: error });
 				}
 			});
 			console.log(`Test case files generated for socket ID ${socketId}.`);
 			return resolve(true);
 		} catch (error) {
 			console.error(`Error in generateTestFiles:`, error);
-			return reject(error);
+			return reject({ errorInGenerateTestFiles: error });
 		}
 	});
 };
