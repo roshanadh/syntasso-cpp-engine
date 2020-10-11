@@ -63,8 +63,8 @@ module.exports = (stderr, socketId) => {
 				};
 			} else {
 				warnings[i] = {
-					lineNumber,
-					columnNumber,
+					lineNumber: parseInt(lineNumber),
+					columnNumber: parseInt(columnNumber),
 					warningMessage,
 					fullWarning,
 				};
