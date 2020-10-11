@@ -4,4 +4,5 @@ module.exports = {
 	handleConfigTwo: require("./handleConfigTwo.js"),
 	handleCompilationError: require("./handleCompilationError.js"),
 	handleLinkerError: require("./handleLinkerError.js"),
+	handle403Response: require("./handle403Response.js"),
 };
