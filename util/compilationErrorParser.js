@@ -5,23 +5,31 @@ const parse = (stderr, regexMatchResult) => {
 	let lineNumber = null,
 		columnNumber = null,
 		errorMessage = null;
-
-	let header = regexMatchResult[0];
-	/*
-	 * If RegExp(`(${socketId}.cpp:\\d+:\\d+: error: )`) matched in the original stderr, ...
-	 * ... header === "s-02c34e5658faf8e781.cpp:5:2: error: "
-	 * If RegExp(`(${socketId}.cpp:\\d+:\\d+: )`) matched in the original stderr, ...
-	 * ... header ===  "s-02c34e5658faf8e781.cpp:5:2:"
-	 */
-	let index = regexMatchResult.index;
-	lineNumber = header.split(":")[1];
-	columnNumber = header.split(":")[2];
-	errorMessage = stderr.substring(index + header.length).split("\n")[0];
-	return {
-		lineNumber,
-		columnNumber,
-		errorMessage,
-	};
+	try {
+		let header = regexMatchResult[0];
+		/*
+		 * If RegExp(`(${socketId}.cpp:\\d+:\\d+: error: )`) matched in the original stderr, ...
+		 * ... header === "s-02c34e5658faf8e781.cpp:5:2: error: "
+		 * If RegExp(`(${socketId}.cpp:\\d+:\\d+: )`) matched in the original stderr, ...
+		 * ... header ===  "s-02c34e5658faf8e781.cpp:5:2:"
+		 */
+		let index = regexMatchResult.index;
+		lineNumber = header.split(":")[1];
+		columnNumber = header.split(":")[2];
+		errorMessage = stderr.substring(index + header.length).split("\n")[0];
+		if (isNaN(lineNumber) || isNaN(columnNumber)) {
+			return {
+				errorMessage,
+			};
+		}
+		return {
+			lineNumber: parseInt(lineNumber),
+			columnNumber: parseInt(columnNumber),
+			errorMessage,
+		};
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 module.exports = (stderr, socketId) => {
@@ -79,9 +87,10 @@ module.exports = (stderr, socketId) => {
 			..._parsed,
 			errorStack: stderr,
 		};
-	} catch (err) {
+	} catch (error) {
+		console.error("Error in compilationErrorParser:", error);
 		return {
-			errorInParser: err,
+			errorInParser: error,
 		};
 	}
 };
