@@ -1,10 +1,13 @@
 const { exec } = require("child_process");
+const { performance } = require("perf_hooks");
 
+const removeClientFilesFromCppContainer = require("./removeClientFilesFromCppContainer.js");
 const copyClientFilesToCppContainer = require("./copyClientFilesToCppContainer.js");
 
 const compileSubmission = (req, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
+			let compilationTime = performance.now();
 			const { socketId } = req.body;
 			console.log("Compiling .cpp submission inside container...");
 			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
@@ -19,6 +22,7 @@ const compileSubmission = (req, socketInstance) => {
 			exec(
 				`docker exec -i ${socketId} g++ -c ${socketId}.cpp -Wall -Wfatal-errors -Werror=div-by-zero`,
 				(error, stdout, stderr) => {
+					compilationTime = performance.now() - compilationTime;
 					/*
 					 * Note: In the following context, the term 'exists' implies that ...
 					 * ... a variable is either not null or not empty.
@@ -60,6 +64,7 @@ const compileSubmission = (req, socketInstance) => {
 						// ... occurred or not during the compilation process
 						return resolve({
 							compilationWarnings: stderr,
+							compilationTime,
 						});
 					}
 					if (error && stderr) {
@@ -73,7 +78,10 @@ const compileSubmission = (req, socketInstance) => {
 						 * ... distinguishing the type of error easier when handling promise...
 						 * ... rejections inside submitController
 						 */
-						return reject({ compilationError: stderr });
+						return reject({
+							compilationError: stderr,
+							compilationTime,
+						});
 					}
 					// at this point, compilation has completed without any errors ...
 					// ... or warnings
@@ -96,7 +104,11 @@ const compileSubmission = (req, socketInstance) => {
 					// resolve an object with keys stdout and stderr both, because this ...
 					// ... makes it easier to check later if a compilation error/warning ...
 					// ... occurred or not during the compilation process
-					return resolve({ stdout, stderr: stderr ? stderr : null });
+					return resolve({
+						stdout,
+						stderr: stderr ? stderr : null,
+						compilationTime,
+					});
 				}
 			);
 		} catch (error) {
@@ -108,7 +120,8 @@ const compileSubmission = (req, socketInstance) => {
 
 module.exports = (req, socketInstance) => {
 	return new Promise((resolve, reject) => {
-		copyClientFilesToCppContainer(req)
+		removeClientFilesFromCppContainer(req.body.socketId)
+			.then(() => copyClientFilesToCppContainer(req))
 			.then(copyLogs => compileSubmission(req, socketInstance))
 			.then(compilationLogs => resolve(compilationLogs))
 			.catch(error => {

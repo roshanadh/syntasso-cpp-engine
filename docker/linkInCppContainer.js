@@ -1,8 +1,10 @@
 const { exec } = require("child_process");
+const { performance } = require("perf_hooks");
 
 module.exports = (req, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
+			let linkTime = performance.now();
 			const { socketId } = req.body;
 			console.log("Linking the object file inside container...");
 			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
@@ -11,6 +13,7 @@ module.exports = (req, socketInstance) => {
 			exec(
 				`docker exec -i ${socketId} g++ ${socketId}.o -o submission`,
 				(error, stdout, stderr) => {
+					linkTime = performance.now() - linkTime;
 					if (stderr) {
 						console.error(
 							`stderr while linking ${socketId}.o:`,
@@ -25,7 +28,7 @@ module.exports = (req, socketInstance) => {
 						 * reject an object with key 'linkerError' because it makes distinguishing the ...
 						 * ... type of error easier when handling promise rejections inside submitController
 						 */
-						return reject({ linkerError: stderr });
+						return reject({ linkerError: stderr, linkTime });
 					}
 					if (error) {
 						console.error(
@@ -43,6 +46,7 @@ module.exports = (req, socketInstance) => {
 						 */
 						return reject({
 							linkerError: error,
+							linkTime,
 						});
 					}
 					// at this point, linking has completed without any errors ...
@@ -62,7 +66,7 @@ module.exports = (req, socketInstance) => {
 						.emit("docker-app-stdout", {
 							stdout: `${socketId}.o file linked.`,
 						});
-					return resolve({ stdout });
+					return resolve({ stdout, linkTime });
 				}
 			);
 		} catch (error) {
