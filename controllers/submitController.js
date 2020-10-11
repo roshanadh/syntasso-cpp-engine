@@ -21,13 +21,19 @@ module.exports = (req, res, next) => {
 					const dockerConfig = parseInt(req.body.dockerConfig);
 					switch (dockerConfig) {
 						case 0:
-							handleConfigZero(req, res, next);
+							// pass empty object as "times" argument, since no times ...
+							// ... have been recorded as of yet
+							handleConfigZero(req, res, next, {});
 							break;
 						case 1:
-							handleConfigOne(req, res, next);
+							// pass empty object as "times" argument, since no times ...
+							// ... have been recorded as of yet
+							handleConfigOne(req, res, next, {});
 							break;
 						case 2:
-							handleConfigTwo(req, res, next);
+							// pass empty object as "times" argument, since no times ...
+							// ... have been recorded as of yet
+							handleConfigTwo(req, res, next, {});
 							break;
 					}
 				}
