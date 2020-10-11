@@ -4,7 +4,14 @@ const {
 	splitWarningsFromError,
 } = require("../util/index.js");
 
-module.exports = (req, res, next, compilationError, compilationWarnings) => {
+module.exports = (
+	req,
+	res,
+	next,
+	times,
+	compilationError,
+	compilationWarnings
+) => {
 	/*
 	 * Sometimes, compilation warnings and the compilation error are adjoined in ...
 	 * ... a single stderr.
@@ -37,6 +44,7 @@ module.exports = (req, res, next, compilationError, compilationWarnings) => {
 				? compilationWarningParser
 				: _parsedWarnings,
 			error: { ..._parsedError, errorType: "compilation-error" },
+			...times,
 		};
 		console.log("Response to the client:", response);
 		return res.json(response);
