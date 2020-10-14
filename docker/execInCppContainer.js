@@ -109,7 +109,7 @@ module.exports = (req, socketInstance) => {
 							});
 						} catch (err) {
 							console.error(
-								`Error while parsing stdout with adjoining JSON objects in execInCContainer for socketId ${socketId}:`,
+								`Error while parsing stdout with adjoining JSON objects in execInCppContainer for socketId ${socketId}:`,
 								err
 							);
 							return reject({
