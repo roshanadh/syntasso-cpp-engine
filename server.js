@@ -44,7 +44,7 @@ const server = app.listen(PORT, () =>
 	console.log(`Syntasso C++ Engine is now listening on port ${PORT}...`)
 );
 
-const socketInstance = new (require("./socket/socket.js"))(server);
+const socketInstance = new (require("./socket/socket.js"))(server).instance;
 
 module.exports = {
 	server,

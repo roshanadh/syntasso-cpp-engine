@@ -1,12 +1,11 @@
 const { exec } = require("child_process");
 
 const { convertTimeToMs } = require("../util/index.js");
-module.exports = (req, socketInstance) => {
+module.exports = (socketId, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
-			const { socketId } = req.body;
 			console.log("Building a C++ image...");
-			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
+			socketInstance.to(socketId).emit("docker-app-stdout", {
 				stdout: `Building a C++ image...`,
 			});
 			let imageBuildTime;
@@ -41,7 +40,7 @@ module.exports = (req, socketInstance) => {
 							// get build time in terms of 0m.000s
 							imageBuildTime = times[1].split("\t")[1];
 							console.log("C++ image built.");
-							socketInstance.instance
+							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
 									stdout: "C++ image built.",
@@ -56,7 +55,7 @@ module.exports = (req, socketInstance) => {
 								"stderr while building C++ image:",
 								stderr
 							);
-							socketInstance.instance
+							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
 									stdout: `stderr while building C++ image: ${stderr}`,
@@ -71,7 +70,7 @@ module.exports = (req, socketInstance) => {
 			);
 			buildProcess.stdout.on("data", stdout => {
 				console.log(stdout);
-				socketInstance.instance.to(socketId).emit("docker-app-stdout", {
+				socketInstance.to(socketId).emit("docker-app-stdout", {
 					stdout,
 				});
 			});
