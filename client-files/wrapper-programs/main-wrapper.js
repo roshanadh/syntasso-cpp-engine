@@ -161,7 +161,7 @@ const main = () => {
 				)
 			);
 		} catch (err) {
-			writeErrorToStderr(err);
+			return writeErrorToStderr(err);
 		}
 	}
 	// write the final response to stdout
