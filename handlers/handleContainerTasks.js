@@ -10,8 +10,9 @@ const handle403Response = require("./handle403Response.js");
 
 const { compilationWarningParser } = require("../util/index.js");
 
-module.exports = (req, res, next, times) => {
+module.exports = (req, res, next) => {
 	const { socketInstance } = require("../server.js");
+	let times = {};
 	let compilationWarnings = null;
 	compileInCppContainer(req, socketInstance)
 		/*
@@ -108,7 +109,7 @@ module.exports = (req, res, next, times) => {
 				);
 			}
 			/*
-			 * Check if error occurred due to a bad dockerConfig value
+			 * Check if error occurred due to a non-existent container
 			 */
 			if (
 				error.error &&
@@ -119,10 +120,10 @@ module.exports = (req, res, next, times) => {
 			) {
 				return handle403Response(
 					res,
-					"Re-request using dockerConfig 0 or 1 because container has not been created or started"
+					"Wait for socket connection to initialize container environment; or re-establish a socket connection"
 				);
 			}
-			console.error("Error in handleConfigTwo:", error);
+			console.error("Error in handleContainerTasks:", error);
 			next(error);
 		});
 };
