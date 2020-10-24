@@ -2,10 +2,9 @@ const { exec } = require("child_process");
 
 const removeCppContainer = require("./removeCppContainer.js");
 const { convertTimeToMs } = require("../util/index.js");
-module.exports = (req, socketInstance) => {
+module.exports = (socketId, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
-			const { socketId } = req.body;
 			removeCppContainer(socketId)
 				.then(removalLogs => {
 					console.log("Creating a C++ container...");

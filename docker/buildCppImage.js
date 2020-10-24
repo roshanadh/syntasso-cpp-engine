@@ -1,10 +1,9 @@
 const { exec } = require("child_process");
 
 const { convertTimeToMs } = require("../util/index.js");
-module.exports = (req, socketInstance) => {
+module.exports = (socketId, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
-			const { socketId } = req.body;
 			console.log("Building a C++ image...");
 			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
 				stdout: `Building a C++ image...`,
