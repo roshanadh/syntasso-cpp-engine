@@ -49,9 +49,9 @@ describe("Test generation of files at /submit:", () => {
 			.end((err, res) => {
 				expect(err).to.be.null;
 				res.body.should.be.a("object");
-				// res.body.sampleInput0.observedOutput.should.equal(
-				// 	"Hello World!"
-				// );
+				res.body.sampleInput0.observedOutput.should.equal(
+					"Hello World!"
+				);
 				expect(fs.existsSync(submissionFilePath)).to.be.true;
 				done();
 			});
@@ -78,9 +78,9 @@ describe("Test generation of files at /submit:", () => {
 			.end((err, res) => {
 				expect(err).to.be.null;
 				res.body.should.be.a("object");
-				// res.body.sampleInput0.observedOutput.should.equal(
-				// 	"Hello World!"
-				// );
+				res.body.sampleInput0.observedOutput.should.equal(
+					"Hello World!"
+				);
 				expect(fs.existsSync(sampleInputsDirPath)).to.be.true;
 
 				let dirContents = fs.readdirSync(sampleInputsDirPath);
@@ -115,9 +115,9 @@ describe("Test generation of files at /submit:", () => {
 			.end((err, res) => {
 				expect(err).to.be.null;
 				res.body.should.be.a("object");
-				// res.body.sampleInput0.observedOutput.should.equal(
-				// 	"Hello World!"
-				// );
+				res.body.sampleInput0.observedOutput.should.equal(
+					"Hello World!"
+				);
 				expect(fs.existsSync(expectedOutputsDirPath)).to.be.true;
 
 				let dirContents = fs.readdirSync(expectedOutputsDirPath);

@@ -128,13 +128,17 @@ module.exports = (req, socketInstance) => {
 				}
 			});
 			mainWrapper.stderr.on("data", stderrBuffer => {
-				const stderr = JSON.parse(stderrBuffer.toString());
-				// check if some instance of Error was written to stderr
-				console.error(
-					`Some error while executing main-wrapper inside ${socketId}:`,
-					stderr
-				);
-				return reject({ error: stderr });
+				try {
+					const stderr = JSON.parse(stderrBuffer.toString());
+					// check if some instance of Error was written to stderr
+					console.error(
+						`Some error while executing main-wrapper inside ${socketId}:`,
+						stderr
+					);
+					return reject({ error: stderr });
+				} catch (error) {
+					return reject({ error });
+				}
 			});
 		} catch (error) {
 			console.error("Error in execInCppContainer:", error);

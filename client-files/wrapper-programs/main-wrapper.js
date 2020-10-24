@@ -156,11 +156,12 @@ const main = () => {
 						testStatus,
 						timedOut:
 							cppProcess.signal === "SIGTERM" ? true : false,
+						observedOutputTooLong: stdout === null ? true : false,
 					})
 				)
 			);
 		} catch (err) {
-			writeErrorToStderr(err);
+			return writeErrorToStderr(err);
 		}
 	}
 	// write the final response to stdout
