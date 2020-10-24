@@ -31,6 +31,8 @@ let sampleInputs,
 	sampleInputFileContents,
 	expectedOutputFileContents,
 	executionTimesForProcesses = [],
+	// array of data generated during the execution of test cases
+	processes = [],
 	// response object to be sent to the process that executes main-wrapper.js
 	response = {
 		timeOutLength: EXECUTION_TIME_OUT_IN_MS,
@@ -129,7 +131,7 @@ const main = () => {
 			let testStatus =
 				expectedOutputFileContents === stdout ? true : false;
 
-			response[`sampleInput${i}`] = {
+			processes[i] = {
 				testStatus,
 				// if cppProcess timed out, its signal would be SIGTERM by default ...
 				// ... otherwise, its signal would be null
@@ -166,7 +168,9 @@ const main = () => {
 	}
 	// write the final response to stdout
 	process.stdout.write(
-		Buffer.from(JSON.stringify({ type: "full-response", ...response }))
+		Buffer.from(
+			JSON.stringify({ type: "full-response", ...response, processes })
+		)
 	);
 };
 

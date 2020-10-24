@@ -23,7 +23,7 @@ describe("Test output of test cases at /submit:", () => {
 				res.body.should.be.a("object");
 				res.body.sampleInputs.should.equal(1);
 				expect(res.body.error).to.be.null;
-				expect(res.body.sampleInput0.testStatus).to.be.true;
+				expect(res.body.processes[0].testStatus).to.be.true;
 				done();
 			});
 	});
@@ -43,7 +43,7 @@ describe("Test output of test cases at /submit:", () => {
 				res.body.should.be.a("object");
 				res.body.sampleInputs.should.equal(1);
 				expect(res.body.error).to.be.null;
-				expect(res.body.sampleInput0.testStatus).to.be.false;
+				expect(res.body.processes[0].testStatus).to.be.false;
 				done();
 			});
 	});
@@ -65,9 +65,9 @@ describe("Test output of test cases at /submit:", () => {
 				expect(res.body.error).to.be.null;
 				expect(res.body.timeOutLength).to.equal(2000);
 				expect(res.body.observedOutputMaxLength).to.equal(2000);
-				expect(res.body.sampleInput0.timedOut).to.be.true;
-				expect(res.body.sampleInput0.observedOutputTooLong).to.be.false;
-				expect(res.body.sampleInput0.testStatus).to.be.false;
+				expect(res.body.processes[0].timedOut).to.be.true;
+				expect(res.body.processes[0].observedOutputTooLong).to.be.false;
+				expect(res.body.processes[0].testStatus).to.be.false;
 				done();
 			});
 	});
@@ -90,9 +90,9 @@ describe("Test output of test cases at /submit:", () => {
 				expect(res.body.error).to.be.null;
 				expect(res.body.timeOutLength).to.equal(2000);
 				expect(res.body.observedOutputMaxLength).to.equal(2000);
-				expect(res.body.sampleInput0.timedOut).to.be.true;
-				expect(res.body.sampleInput0.observedOutputTooLong).to.be.true;
-				expect(res.body.sampleInput0.testStatus).to.be.false;
+				expect(res.body.processes[0].timedOut).to.be.true;
+				expect(res.body.processes[0].observedOutputTooLong).to.be.true;
+				expect(res.body.processes[0].testStatus).to.be.false;
 				done();
 			});
 	});
