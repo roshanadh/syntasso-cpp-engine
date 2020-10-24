@@ -5,7 +5,7 @@ const handle403Response = require("./handle403Response.js");
 
 module.exports = (req, res, next, times) => {
 	const { socketInstance } = require("../server.js");
-	startCppContainer(req, socketInstance)
+	startCppContainer(req.body.socketId, socketInstance)
 		.then(startLogs => {
 			times.containerStartTime = startLogs.containerStartTime;
 			return handleConfigTwo(req, res, next, times);
