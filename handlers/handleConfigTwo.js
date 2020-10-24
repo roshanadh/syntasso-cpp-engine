@@ -112,6 +112,7 @@ module.exports = (req, res, next, times) => {
 			 */
 			if (
 				error.error &&
+				error.error.message &&
 				error.error.message.includes(
 					`No such container: ${req.body.socketId}`
 				)
