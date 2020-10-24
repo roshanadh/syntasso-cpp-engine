@@ -5,7 +5,7 @@ module.exports = (socketId, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
 			console.log("Starting C++ container...");
-			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
+			socketInstance.to(socketId).emit("docker-app-stdout", {
 				stdout: "Starting C++ container...",
 			});
 			let containerStartTime;
@@ -46,12 +46,12 @@ module.exports = (socketId, socketInstance) => {
 								`stdout during C++ container start: ${stdout}`
 							);
 							console.log("C++ container started.");
-							socketInstance.instance
+							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
 									stdout: `stdout during C++ container start: ${stdout}`,
 								});
-							socketInstance.instance
+							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
 									stdout: "C++ container started.",
@@ -68,7 +68,7 @@ module.exports = (socketId, socketInstance) => {
 								"stderr while starting C++ container:",
 								stderr
 							);
-							socketInstance.instance
+							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
 									stdout: `stderr while starting C++ container: ${stderr}`,

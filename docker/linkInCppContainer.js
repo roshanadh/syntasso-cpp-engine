@@ -7,7 +7,7 @@ module.exports = (req, socketInstance) => {
 			let linkTime = performance.now();
 			const { socketId } = req.body;
 			console.log("Linking the object file inside container...");
-			socketInstance.instance.to(socketId).emit("docker-app-stdout", {
+			socketInstance.to(socketId).emit("docker-app-stdout", {
 				stdout: "Linking the object file inside container...",
 			});
 			exec(
@@ -19,11 +19,9 @@ module.exports = (req, socketInstance) => {
 							`stderr while linking ${socketId}.o:`,
 							stderr
 						);
-						socketInstance.instance
-							.to(socketId)
-							.emit("docker-app-stdout", {
-								stdout: `stderr while linking object file: ${stderr}`,
-							});
+						socketInstance.to(socketId).emit("docker-app-stdout", {
+							stdout: `stderr while linking object file: ${stderr}`,
+						});
 						/*
 						 * reject an object with key 'linkerError' because it makes distinguishing the ...
 						 * ... type of error easier when handling promise rejections inside submitController
@@ -35,11 +33,9 @@ module.exports = (req, socketInstance) => {
 							`Error while linking ${socketId}.o:`,
 							error
 						);
-						socketInstance.instance
-							.to(socketId)
-							.emit("docker-app-stdout", {
-								stdout: `Error while linking object file: ${stderr}`,
-							});
+						socketInstance.to(socketId).emit("docker-app-stdout", {
+							stdout: `Error while linking object file: ${stderr}`,
+						});
 						/*
 						 * reject an object with key 'linkerError' because it makes distinguishing the ...
 						 * ... type of error easier when handling promise rejections inside submitController
@@ -54,18 +50,14 @@ module.exports = (req, socketInstance) => {
 						console.log(
 							`stdout during linking of object file: ${stdout}`
 						);
-						socketInstance.instance
-							.to(socketId)
-							.emit("docker-app-stdout", {
-								stdout: `stdout during linking of object file: ${stdout}`,
-							});
+						socketInstance.to(socketId).emit("docker-app-stdout", {
+							stdout: `stdout during linking of object file: ${stdout}`,
+						});
 					}
 					console.log(`${socketId}.o file linked.`);
-					socketInstance.instance
-						.to(socketId)
-						.emit("docker-app-stdout", {
-							stdout: `${socketId}.o file linked.`,
-						});
+					socketInstance.to(socketId).emit("docker-app-stdout", {
+						stdout: `${socketId}.o file linked.`,
+					});
 					return resolve({ stdout, linkTime });
 				}
 			);

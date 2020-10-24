@@ -8,11 +8,9 @@ module.exports = (socketId, socketInstance) => {
 			removeCppContainer(socketId)
 				.then(removalLogs => {
 					console.log("Creating a C++ container...");
-					socketInstance.instance
-						.to(socketId)
-						.emit("docker-app-stdout", {
-							stdout: "Creating a C++ container...",
-						});
+					socketInstance.to(socketId).emit("docker-app-stdout", {
+						stdout: "Creating a C++ container...",
+					});
 					let containerCreateTime;
 					exec(
 						`time docker create -it --name ${socketId} img_cpp`,
@@ -53,12 +51,12 @@ module.exports = (socketId, socketInstance) => {
 										`stdout during C++ container creation: ${stdout}`
 									);
 									console.log("C++ container created.");
-									socketInstance.instance
+									socketInstance
 										.to(socketId)
 										.emit("docker-app-stdout", {
 											stdout: `stdout during C++ container creation: ${stdout}`,
 										});
-									socketInstance.instance
+									socketInstance
 										.to(socketId)
 										.emit("docker-app-stdout", {
 											stdout: "C++ container created.",
@@ -75,7 +73,7 @@ module.exports = (socketId, socketInstance) => {
 										"stderr while creating C++ container:",
 										stderr
 									);
-									socketInstance.instance
+									socketInstance
 										.to(socketId)
 										.emit("docker-app-stdout", {
 											stdout: `stderr while creating C++ container: ${stderr}`,
