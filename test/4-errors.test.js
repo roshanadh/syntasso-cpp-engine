@@ -168,11 +168,11 @@ describe("Test submission programs at /submit:", () => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
 					expect(res.body.error).to.be.null;
-					expect(res.body.sampleInput0.testStatus).to.be.false;
-					res.body.sampleInput0.observedOutput.should.equal(
+					expect(res.body.processes[0].testStatus).to.be.false;
+					res.body.processes[0].observedOutput.should.equal(
 						"Hello World!"
 					);
-					res.body.sampleInput0.exception.should.equal(
+					res.body.processes[0].exception.should.equal(
 						"Division by zero condition!"
 					);
 					done();

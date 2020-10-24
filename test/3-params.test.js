@@ -167,7 +167,7 @@ describe("Test POST /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
-					res.body.sampleInput0.observedOutput.should.equal(
+					res.body.processes[0].observedOutput.should.equal(
 						"Hello World!"
 					);
 					done();
@@ -187,7 +187,7 @@ describe("Test POST /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
-					res.body.sampleInput0.observedOutput.should.equal(
+					res.body.processes[0].observedOutput.should.equal(
 						"Hello World!"
 					);
 					done();
@@ -207,7 +207,7 @@ describe("Test POST /submit:", () => {
 				.end((err, res) => {
 					expect(err).to.be.null;
 					res.body.should.be.a("object");
-					res.body.sampleInput0.observedOutput.should.equal(
+					res.body.processes[0].observedOutput.should.equal(
 						"Hello World!"
 					);
 					done();
