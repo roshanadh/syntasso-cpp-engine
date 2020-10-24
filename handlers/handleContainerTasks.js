@@ -109,14 +109,16 @@ module.exports = (req, res, next) => {
 				);
 			}
 			/*
-			 * Check if error occurred due to a non-existent container
+			 * Check if error occurred due to a non-existent container ...
+			 * or an idle (not-running) container
 			 */
 			if (
 				error.error &&
 				error.error.message &&
-				error.error.message.includes(
+				(error.error.message.includes(
 					`No such container: ${req.body.socketId}`
-				)
+				) ||
+					error.error.message.includes("is not running"))
 			) {
 				return handle403Response(
 					res,
