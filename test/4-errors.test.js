@@ -12,7 +12,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!"\n}`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -32,7 +31,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<randomlib>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -52,7 +50,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main() {\nint a = 10 / 0;\n}`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -70,7 +67,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nint main(){\nfoo();\n}`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -90,7 +86,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<iostream> int main(){\nint a; int b;\n}`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -117,7 +112,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -135,7 +129,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include<iostream>\nusing namespace std;\nvoid foo();\nint main(){\nfoo();\n}\nvoid foo();`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)
@@ -158,7 +151,6 @@ describe("Test submission programs at /submit:", () => {
 			const payload = {
 				socketId,
 				code: `#include <iostream>\n using namespace std;\n double division(int a, int b) { if( b == 0 ) { throw "Division by zero condition!"; } return (a/b); } int main () { int x = 50; int y = 0; double z = 0; cout<<"Hello World!"; try { z = division(x, y); cout << z << endl; } catch (const char* msg) { cerr << msg << endl; } return 0; }`,
-				dockerConfig: "2",
 				testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 			};
 			chai.request(server)

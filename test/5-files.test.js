@@ -40,7 +40,6 @@ describe("Test generation of files at /submit:", () => {
 		const payload = {
 			socketId,
 			code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
-			dockerConfig: "2",
 			testCases: [{ sampleInput: 0, expectedOutput: 0 }],
 		};
 		chai.request(server)
@@ -60,7 +59,6 @@ describe("Test generation of files at /submit:", () => {
 		const payload = {
 			socketId,
 			code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
-			dockerConfig: "2",
 			testCases: [
 				{ sampleInput: 0, expectedOutput: 0 },
 				{ sampleInput: 0, expectedOutput: 0 },
@@ -97,7 +95,6 @@ describe("Test generation of files at /submit:", () => {
 		const payload = {
 			socketId,
 			code: `#include<iostream>\nusing namespace std;\nint main() {\ncout << "Hello World!";\n}`,
-			dockerConfig: "2",
 			testCases: [
 				{ sampleInput: 0, expectedOutput: 0 },
 				{ sampleInput: 0, expectedOutput: 0 },
