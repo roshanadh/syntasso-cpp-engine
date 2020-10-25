@@ -132,6 +132,7 @@ const main = () => {
 				expectedOutputFileContents === stdout ? true : false;
 
 			processes[i] = {
+				id: i,
 				testStatus,
 				// if cppProcess timed out, its signal would be SIGTERM by default ...
 				// ... otherwise, its signal would be null
