@@ -12,7 +12,7 @@ const writeErrorToStderr = error => {
 	);
 };
 
-process.on("uncaughtException", error => writeErrorToStderr);
+process.on("uncaughtException", writeErrorToStderr);
 
 const { spawnSync } = require("child_process");
 const { performance } = require("perf_hooks");
