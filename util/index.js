@@ -4,4 +4,5 @@ module.exports = {
 	linkerErrorParser: require("./linkerErrorParser.js"),
 	splitWarningsFromError: require("./splitWarningsFromError.js"),
 	convertTimeToMs: require("./convertTimeToMs.js"),
+	logger: require("./logger.js"),
 };
