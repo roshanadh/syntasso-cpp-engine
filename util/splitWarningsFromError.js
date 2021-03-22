@@ -1,3 +1,5 @@
+const { logger } = require("./index.js");
+
 module.exports = (stderr, socketId) => {
 	// return the error substring and warnings substring from a combined stack
 	/*
@@ -41,7 +43,7 @@ module.exports = (stderr, socketId) => {
 			errorSubstring,
 		};
 	} catch (error) {
-		console.error("Error in splitWarningsFromError:", error);
+		logger.error("Error in splitWarningsFromError:", error);
 		return {
 			errorInParser: error,
 		};
