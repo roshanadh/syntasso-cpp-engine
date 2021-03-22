@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const { logger } = require("../util/index.js");
+
 module.exports = req => {
 	return new Promise((resolve, reject) => {
 		// at this point, both sampleInputs and expectedOutputs dirs have ...
@@ -22,7 +24,7 @@ module.exports = req => {
 		);
 		let sampleInputFilePath, expectedOutputFilePath;
 		try {
-			console.log(
+			logger.info(
 				`Generating test case files for socket ID: ${socketId}...`
 			);
 			testCases.forEach((element, index) => {
@@ -39,28 +41,28 @@ module.exports = req => {
 						sampleInputFilePath,
 						element.sampleInput.toString()
 					);
-					console.log(
+					logger.info(
 						`${socketId}-sampleInput-${index}.txt generated.`
 					);
 					fs.writeFileSync(
 						expectedOutputFilePath,
 						element.expectedOutput.toString()
 					);
-					console.log(
+					logger.info(
 						`${socketId}-expectedOutput-${index}.txt generated.`
 					);
 				} catch (error) {
-					console.error(
+					logger.error(
 						`Error while writing to test case files for socketId ${socketId}:`,
 						error
 					);
 					return reject({ errorInGenerateTestFiles: error });
 				}
 			});
-			console.log(`Test case files generated for socket ID ${socketId}.`);
+			logger.info(`Test case files generated for socket ID ${socketId}.`);
 			return resolve(true);
 		} catch (error) {
-			console.error(`Error in generateTestFiles:`, error);
+			logger.error(`Error in generateTestFiles:`, error);
 			return reject({ errorInGenerateTestFiles: error });
 		}
 	});

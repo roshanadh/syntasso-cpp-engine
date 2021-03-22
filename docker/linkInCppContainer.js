@@ -1,12 +1,14 @@
 const { exec } = require("child_process");
 const { performance } = require("perf_hooks");
 
+const { logger } = require("../util/index.js");
+
 module.exports = (req, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
 			let linkTime = performance.now();
 			const { socketId } = req.body;
-			console.log("Linking the object file inside container...");
+			logger.info("Linking the object file inside container...");
 			socketInstance.to(socketId).emit("docker-app-stdout", {
 				stdout: "Linking the object file inside container...",
 			});
@@ -15,7 +17,7 @@ module.exports = (req, socketInstance) => {
 				(error, stdout, stderr) => {
 					linkTime = performance.now() - linkTime;
 					if (stderr) {
-						console.error(
+						logger.error(
 							`stderr while linking ${socketId}.o:`,
 							stderr
 						);
@@ -29,7 +31,7 @@ module.exports = (req, socketInstance) => {
 						return reject({ linkerError: stderr, linkTime });
 					}
 					if (error) {
-						console.error(
+						logger.error(
 							`Error while linking ${socketId}.o:`,
 							error
 						);
@@ -47,14 +49,14 @@ module.exports = (req, socketInstance) => {
 					}
 					// at this point, linking has completed without any errors ...
 					if (stdout) {
-						console.log(
+						logger.info(
 							`stdout during linking of object file: ${stdout}`
 						);
 						socketInstance.to(socketId).emit("docker-app-stdout", {
 							stdout: `stdout during linking of object file: ${stdout}`,
 						});
 					}
-					console.log(`${socketId}.o file linked.`);
+					logger.info(`${socketId}.o file linked.`);
 					socketInstance.to(socketId).emit("docker-app-stdout", {
 						stdout: `${socketId}.o file linked.`,
 					});
@@ -62,7 +64,7 @@ module.exports = (req, socketInstance) => {
 				}
 			);
 		} catch (error) {
-			console.error("Error in linkInCppContainer:", error);
+			logger.error("Error in linkInCppContainer:", error);
 			return reject({ error });
 		}
 	});

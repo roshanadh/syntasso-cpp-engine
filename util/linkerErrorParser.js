@@ -1,3 +1,5 @@
+const { logger } = require("./index.js");
+
 module.exports = stderr => {
 	try {
 		let errorMessage,
@@ -15,7 +17,7 @@ module.exports = stderr => {
 			errorStack,
 		};
 	} catch (error) {
-		console.error(`Error in linkerErrorParser:`, error);
+		logger.error(`Error in linkerErrorParser:`, error);
 		return { errorInParser: error };
 	}
 };

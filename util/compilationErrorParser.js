@@ -1,3 +1,5 @@
+const { logger } = require("./index.js");
+
 const parse = (stderr, regexMatchResult) => {
 	/*
 	 * Parses the lineNumber, columnNumber, and errorMessage from an error stack
@@ -88,7 +90,7 @@ module.exports = (stderr, socketId) => {
 			errorStack: stderr,
 		};
 	} catch (error) {
-		console.error("Error in compilationErrorParser:", error);
+		logger.error("Error in compilationErrorParser:", error);
 		return {
 			errorInParser: error,
 		};

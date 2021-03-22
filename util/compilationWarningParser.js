@@ -1,3 +1,5 @@
+const { logger } = require("./index.js");
+
 module.exports = (stderr, socketId) => {
 	// Parses compilation warnings encountered in compileInCppContainer process
 	/*
@@ -75,7 +77,7 @@ module.exports = (stderr, socketId) => {
 			warnings,
 		};
 	} catch (error) {
-		console.error(`error in compilationWarningParser.js:`, error);
+		logger.error(`error in compilationWarningParser.js:`, error);
 		return {
 			errorInParser: error,
 		};
