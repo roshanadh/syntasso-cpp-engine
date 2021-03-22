@@ -1,10 +1,11 @@
 const { exec } = require("child_process");
 
-const { convertTimeToMs } = require("../util/index.js");
+const { convertTimeToMs, logger } = require("../util/index.js");
+
 module.exports = (socketId, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
-			console.log("Starting C++ container...");
+			logger.info("Starting C++ container...");
 			socketInstance.to(socketId).emit("docker-app-stdout", {
 				stdout: "Starting C++ container...",
 			});
@@ -14,7 +15,7 @@ module.exports = (socketId, socketInstance) => {
 				{ shell: "/bin/bash" },
 				(error, stdout, stderr) => {
 					if (error) {
-						console.error(
+						logger.error(
 							"Error while starting C++ container:",
 							error
 						);
@@ -42,10 +43,10 @@ module.exports = (socketId, socketInstance) => {
 							times = stderr.split("\n");
 							// get build time in terms of 0m.000s
 							containerStartTime = times[1].split("\t")[1];
-							console.log(
+							logger.info(
 								`stdout during C++ container start: ${stdout}`
 							);
-							console.log("C++ container started.");
+							logger.info("C++ container started.");
 							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
@@ -64,7 +65,7 @@ module.exports = (socketId, socketInstance) => {
 							});
 						} catch (err) {
 							// stderr contains an actual error and not execution times
-							console.error(
+							logger.error(
 								"stderr while starting C++ container:",
 								stderr
 							);
@@ -82,7 +83,7 @@ module.exports = (socketId, socketInstance) => {
 				}
 			);
 		} catch (error) {
-			console.error("Error in startCppContainer:", error);
+			logger.error("Error in startCppContainer:", error);
 			return reject({ error });
 		}
 	});

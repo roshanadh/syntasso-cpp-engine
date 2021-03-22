@@ -1,10 +1,11 @@
 const { exec } = require("child_process");
 
-const { convertTimeToMs } = require("../util/index.js");
+const { convertTimeToMs, logger } = require("../util/index.js");
+
 module.exports = (socketId, socketInstance) => {
 	return new Promise((resolve, reject) => {
 		try {
-			console.log("Building a C++ image...");
+			logger.info("Building a C++ image...");
 			socketInstance.to(socketId).emit("docker-app-stdout", {
 				stdout: `Building a C++ image...`,
 			});
@@ -14,7 +15,7 @@ module.exports = (socketId, socketInstance) => {
 				{ shell: "/bin/bash" },
 				(error, stdout, stderr) => {
 					if (error) {
-						console.error("Error while building C++ image:", error);
+						logger.error("Error while building C++ image:", error);
 						// reject an object with keys error or stderr, because this ...
 						// ... makes it easier to check later if an error occurred ...
 						// ... or an stderr was generated during the build process
@@ -39,7 +40,7 @@ module.exports = (socketId, socketInstance) => {
 							times = stderr.split("\n");
 							// get build time in terms of 0m.000s
 							imageBuildTime = times[1].split("\t")[1];
-							console.log("C++ image built.");
+							logger.info("C++ image built.");
 							socketInstance
 								.to(socketId)
 								.emit("docker-app-stdout", {
@@ -51,7 +52,7 @@ module.exports = (socketId, socketInstance) => {
 							});
 						} catch (err) {
 							// stderr contains an actual error and not execution times
-							console.error(
+							logger.error(
 								"stderr while building C++ image:",
 								stderr
 							);
@@ -69,13 +70,13 @@ module.exports = (socketId, socketInstance) => {
 				}
 			);
 			buildProcess.stdout.on("data", stdout => {
-				console.log(stdout);
+				logger.info(stdout);
 				socketInstance.to(socketId).emit("docker-app-stdout", {
 					stdout,
 				});
 			});
 		} catch (error) {
-			console.error("Error in buildCppImage:", error);
+			logger.error("Error in buildCppImage:", error);
 			return reject({ error });
 		}
 	});
