@@ -1,6 +1,8 @@
 const path = require("path");
 const rimraf = require("rimraf");
 
+const { logger } = require("../util/index.js");
+
 module.exports = socketId => {
 	// remove the {socketId} sub-directory inside the client-files directory
 	return new Promise((resolve, reject) => {
@@ -12,13 +14,13 @@ module.exports = socketId => {
 				"client-files",
 				socketId
 			);
-			console.log(
+			logger.info(
 				`Removing client-files sub-directory for socket ID ${socketId}...`
 			);
 			if (process.env.NODE_ENV === "test") {
 				// if in test env, use the sync method
 				rimraf.sync(clientFilesSubDirPath);
-				console.log(
+				logger.info(
 					`Removed client-files sub-directory for socket ID ${socketId}.`
 				);
 				return resolve(clientFilesSubDirPath);
@@ -32,7 +34,7 @@ module.exports = socketId => {
 						);
 						return reject(error);
 					}
-					console.log(
+					logger.info(
 						`Removed client-files sub-directory for socket ID ${socketId}.`
 					);
 					return resolve(clientFilesSubDirPath);
@@ -40,7 +42,7 @@ module.exports = socketId => {
 			}
 		} catch (error) {
 			if (error.code === "ENOENT") return resolve(clientFilesSubDirPath);
-			console.error(`error inside cleanUpClientFiles:`, error);
+			logger.error(`error inside cleanUpClientFiles:`, error);
 			reject(error);
 		}
 	});
