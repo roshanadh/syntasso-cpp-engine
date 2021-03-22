@@ -1,3 +1,5 @@
+const { logger } = require("../util/index.js");
+
 socketIdValidator = req => {
 	const { socketInstance } = require("../server.js");
 	const listOfClients = Object.keys(socketInstance.sockets.sockets);
@@ -33,7 +35,7 @@ const testCasesValidator = req => {
 };
 
 module.exports = (req, res, next) => {
-	console.log("POST request received at /submit");
+	logger.info("POST request received at /submit");
 	switch (socketIdValidator(req)) {
 		case "no-socket":
 			return res.status(400).json({
