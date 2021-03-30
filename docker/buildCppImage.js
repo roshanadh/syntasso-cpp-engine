@@ -11,7 +11,7 @@ module.exports = (socketId, socketInstance) => {
 			});
 			let imageBuildTime;
 			const buildProcess = exec(
-				`time docker build -t img_cpp .`,
+				`time docker build -t img_cpp ./docker`,
 				{ shell: "/bin/bash" },
 				(error, stdout, stderr) => {
 					if (error) {
