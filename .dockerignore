@@ -1,3 +1,1 @@
-# Ignore every file and directory in the current context, except the client-files/ directory, which will be included in the build context sent to the Docker daemon
-*
-!client-files/
+node_modules/
