@@ -11,6 +11,7 @@ module.exports = (
 	req,
 	res,
 	next,
+	_socketInstance,
 	times,
 	compilationError,
 	compilationWarnings
