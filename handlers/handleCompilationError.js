@@ -2,6 +2,8 @@ const {
 	compilationWarningParser,
 	compilationErrorParser,
 	splitWarningsFromError,
+	emitErrorBeforeExecEvent,
+	fillProcessesArray,
 	logger,
 } = require("../util/index.js");
 
@@ -45,8 +47,19 @@ module.exports = (
 				? compilationWarnings
 				: _parsedWarnings,
 			error: { ..._parsedError, errorType: "compilation-error" },
+			// send processes array with compilation error info in each element
+			processes: fillProcessesArray(
+				_parsedError,
+				req.body.testCases.length
+			),
 			...times,
 		};
+
+		emitErrorBeforeExecEvent(
+			_socketInstance.socketId,
+			_socketInstance.socketInstance,
+			req.body.testCases.length
+		);
 		logger.info("Response to the client:", response);
 		return res.json(response);
 	} catch (error) {
