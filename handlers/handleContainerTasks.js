@@ -83,6 +83,7 @@ module.exports = (req, res, next) => {
 					req,
 					res,
 					next,
+					{ socketId: req.body.socketId, socketInstance },
 					times,
 					error.compilationError,
 					compilationWarnings
@@ -103,6 +104,7 @@ module.exports = (req, res, next) => {
 					req,
 					res,
 					next,
+					{ socketId: req.body.socketId, socketInstance },
 					times,
 					error.linkerError,
 					compilationWarnings
